@@ -198,8 +198,8 @@ struct sde_hw_rotator_context {
 	struct sde_rot_hw_resource *hwres;
 	enum   sde_rot_queue_prio q_id;
 	u32    session_id;
-	u32    *regdma_base;
-	u32    *regdma_wrptr;
+	char __iomem *regdma_base;
+	char __iomem *regdma_wrptr;
 	u32    timestamp;
 	struct completion rot_comp;
 	struct completion regdma_comp;
@@ -239,7 +239,7 @@ struct sde_hw_rotator {
 	u32    cmd_queue[SDE_HW_ROT_REGDMA_RAM_SIZE];
 
 	/* Cmd Queue Write Ptr */
-	u32   *cmd_wr_ptr[ROT_QUEUE_MAX][SDE_HW_ROT_REGDMA_TOTAL_CTX];
+	char __iomem *cmd_wr_ptr[ROT_QUEUE_MAX][SDE_HW_ROT_REGDMA_TOTAL_CTX];
 
 	/* Rotator Context */
 	struct sde_hw_rotator_context
@@ -293,7 +293,7 @@ static inline u32 sde_hw_rotator_get_regdma_ctxidx(
  * @ctx: Rotator Context
  * return: base segment address
  */
-static inline u32 *sde_hw_rotator_get_regdma_segment_base(
+static inline char __iomem *sde_hw_rotator_get_regdma_segment_base(
 		struct sde_hw_rotator_context *ctx)
 {
 	SDEROT_DBG("regdma base @slot[%d]: %p\n",
@@ -309,11 +309,11 @@ static inline u32 *sde_hw_rotator_get_regdma_segment_base(
  * @ctx: Rotator Context
  * return: segment address
  */
-static inline u32 *sde_hw_rotator_get_regdma_segment(
+static inline char __iomem *sde_hw_rotator_get_regdma_segment(
 		struct sde_hw_rotator_context *ctx)
 {
 	u32 idx = sde_hw_rotator_get_regdma_ctxidx(ctx);
-	u32 *addr = ctx->regdma_wrptr;
+	char __iomem *addr = ctx->regdma_wrptr;
 
 	SDEROT_DBG("regdma slot[%d] ==> %p\n", idx, addr);
 	return addr;
@@ -327,7 +327,7 @@ static inline u32 *sde_hw_rotator_get_regdma_segment(
  */
 static inline void sde_hw_rotator_put_regdma_segment(
 		struct sde_hw_rotator_context *ctx,
-		u32 *wrptr)
+		char __iomem *wrptr)
 {
 	u32 idx = sde_hw_rotator_get_regdma_ctxidx(ctx);
 
