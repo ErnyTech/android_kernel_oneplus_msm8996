@@ -717,6 +717,7 @@ static int snd_compr_drain(struct snd_compr_stream *stream)
 	if (!retval) {
 		stream->runtime->state = SNDRV_PCM_STATE_DRAINING;
 		wake_up(&stream->runtime->sleep);
+		return retval;
 	}
 
 ret:
@@ -762,6 +763,11 @@ static int snd_compr_partial_drain(struct snd_compr_stream *stream)
 		return -EPERM;
 
 	retval = stream->ops->trigger(stream, SND_COMPR_TRIGGER_PARTIAL_DRAIN);
+	if (retval) {
+		pr_debug("Partial drain returned failure\n");
+		wake_up(&stream->runtime->sleep);
+		return retval;
+	}
 
 	stream->next_track = false;
 	return retval;
@@ -792,6 +798,12 @@ static int snd_compress_simple_ioctls(struct file *file,
 {
 	int retval = -ENOTTY;
 
+	if (snd_BUG_ON(!data))
+		return -EFAULT;
+	stream = &data->stream;
+	if (snd_BUG_ON(!stream))
+		return -EFAULT;
+	mutex_lock(&stream->device->lock);
 	switch (_IOC_NR(cmd)) {
 	case _IOC_NR(SNDRV_COMPRESS_IOCTL_VERSION):
 		retval = put_user(SNDRV_COMPRESS_VERSION,
