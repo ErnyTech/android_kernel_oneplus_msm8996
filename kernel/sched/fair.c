@@ -3261,36 +3261,36 @@ bias_to_prev_cpu(struct cpu_select_env *env, struct cluster_cpu_stats *stats)
 	 * p->last_switch_out_ts can denote last preemption time as well as
 	 * last sleep time.
 	 */
-	if (normal_path)
+    if (normal_path)
 	if (task->ravg.mark_start - task->last_switch_out_ts >=
 					sched_short_sleep_task_threshold)
 		return false;
 
-	env->task_load = scale_load_to_cpu(task_load(task), prev_cpu);
-	cluster = cpu_rq(prev_cpu)->cluster;
+    env->task_load = scale_load_to_cpu(task_load(task), prev_cpu);
+    cluster = cpu_rq(prev_cpu)->cluster;
 
-	if (!task_load_will_fit(task, env->task_load, prev_cpu)) {
+    if (!task_load_will_fit(task, env->task_load, prev_cpu)) {
 
-		__set_bit(cluster->id, env->backup_list);
-		__clear_bit(cluster->id, env->candidate_list);
-		return false;
+	__set_bit(cluster->id, env->backup_list);
+	__clear_bit(cluster->id, env->candidate_list);
+	return false;
+    }
+
+    if (env->claims)
+	env->cpu_load = scale_load_to_cpu(opc_cpu_cravg_sync(prev_cpu, env->sync, env->op_path), prev_cpu);
+    else
+	env->cpu_load = cpu_load_sync(prev_cpu, env->sync);
+
+    if (sched_cpu_high_irqload(prev_cpu) ||
+	spill_threshold_crossed(env, cpu_rq(prev_cpu))) {
+	if (normal_path) {
+		update_spare_capacity(stats, env, prev_cpu,
+		cluster->capacity, env->cpu_load);
 	}
+	return false;
+    }
 
-	if (env->claims)
-		env->cpu_load = scale_load_to_cpu(opc_cpu_cravg_sync(prev_cpu, env->sync, env->op_path), prev_cpu);
-	else
-		env->cpu_load = cpu_load_sync(prev_cpu, env->sync);
-
-	if (sched_cpu_high_irqload(prev_cpu) ||
-			spill_threshold_crossed(env, cpu_rq(prev_cpu))) {
-		if (normal_path) {
-			update_spare_capacity(stats, env, prev_cpu,
-				cluster->capacity, env->cpu_load);
-		}
-		return false;
-	}
-
-	return true;
+    return true;
 }
 
 static inline bool
