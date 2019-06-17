@@ -757,9 +757,9 @@ int mdss_dsi_panel_reset(struct mdss_panel_data *pdata, int enable)
 		gpio_free(ctrl_pdata->rst_gpio);
 		if (gpio_is_valid(ctrl_pdata->mode_gpio))
 			gpio_free(ctrl_pdata->mode_gpio);
-			#if (defined MDSS_OEM_FASTLY_RESUME)
-			usleep_range(10 * 1000,10 * 1000);
-			#endif
+#if (defined MDSS_OEM_FASTLY_RESUME)
+		usleep_range(10 * 1000,10 * 1000);
+#endif
 	}
 
 exit:
