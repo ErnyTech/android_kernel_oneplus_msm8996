@@ -3,8 +3,8 @@
 #include <linux/module.h>
 #include <linux/slab.h>
 #include <linux/time.h>
+#include <linux/power/oem_external_fg.h>
 #include "op_dash_adapter.h"
-#include "oem_external_fg.h"
 
 static struct op_adapter_chip *the_chip;
 
@@ -90,7 +90,7 @@ static void dash_uart_tx_bit(
 		else
 			dash_uart_gpio_set_value(
 			chip, chip->uart_tx_gpio, 0);
-			tx_bit++;
+        tx_bit++;
 		break;
 	case BIT_STOP:
 	case BIT_IDLE:
