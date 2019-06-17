@@ -38,7 +38,7 @@
 #include <linux/of_gpio.h>
 #endif
 #include <linux/wakelock.h>
-#include "oem_external_fg.h"
+#include <linux/power/oem_external_fg.h>
 
 #define DRIVER_VERSION			"1.1.0"
 /* Bq27541 standard data commands */

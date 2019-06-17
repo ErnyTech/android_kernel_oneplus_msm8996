@@ -17,7 +17,7 @@
 #include <linux/power_supply.h>
 #include <linux/wakelock.h>
 #include <linux/interrupt.h>
-#include "oem_external_fg.h"
+#include <linux/power/oem_external_fg.h>
 
 #include <linux/pm_qos.h>
 #include <soc/qcom/clock-rpm.h>
