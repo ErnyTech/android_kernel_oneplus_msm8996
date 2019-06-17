@@ -1007,7 +1007,7 @@ CSID_TG:
             __func__,slave_info->sensor_name);
     else
         push_component_info(CameraID,match_tbl[i].sensor_name,
-            match_tbl[i].vendor_name);
+    match_tbl[i].vendor_name);
 
 	msm_sensor_fill_sensor_info(s_ctrl, probed_info, entity_name);
 
